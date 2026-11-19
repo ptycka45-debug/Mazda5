@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mazda 5 — Учёт ресурса запчастей</title>
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mazda 5 Запчасти" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-14">
+
+  <!-- Верхняя шапка -->
+  <header class="bg-slate-900 text-white shadow-lg">
+    <div class="max-w-4xl mx-auto px-4 py-5">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-inner shrink-0">
+            <svg class="w-7 h-7 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M8.5 12.2l2.5 2.5 4.8-5.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <h1 class="text-2xl font-extrabold tracking-tight">Mazda 5</h1>
+              <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">2012 г.в.</span>
+            </div>
+            <p class="text-sm text-slate-300 mt-0.5">Учёт замен и аналитика ресурса запчастей</p>
+          </div>
+        </div>
+
+        <!-- Кнопка установки на рабочий стол (появляется автоматически, когда браузер разрешает установку) -->
+        <button id="installAppBtn" onclick="installPWA()" class="hidden px-3.5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm border border-sky-300 shadow transition items-center gap-1.5 shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          Установить
+        </button>
+      </div>
+
+      <!-- Блок текущего одометра (выровненный по одной линии) -->
+      <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-3.5 mb-3.5">
+        <label for="odometerInput" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+          Текущий одометр
+        </label>
+        <div class="flex items-stretch gap-3">
+          <div class="relative flex-1">
+            <input
+              id="odometerInput"
+              type="number"
+              inputmode="numeric"
+              class="w-full h-12 pl-4 pr-12 rounded-xl bg-slate-900 border border-slate-600 text-amber-400 font-extrabold text-xl focus:outline-none focus:border-emerald-400 transition"
+              placeholder="290685"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400 pointer-events-none">км</span>
+          </div>
+          <button
+            onclick="updateOdometer()"
+            class="h-12 px-6 rounded-xl bg-slate-700 hover:bg-slate-600 active:scale-[0.99] text-white font-bold text-base border border-slate-500 transition shrink-0"
+          >
+            Обновить
+          </button>
+        </div>
+      </div>
+
+      <!-- Главная кнопка добавления замены -->
+      <button
+        onclick="openAddModal()"
+        class="w-full h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-[0.99] text-slate-950 font-extrabold text-lg border border-emerald-300 shadow-md transition flex items-center justify-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+        </svg>
+        Записать замену
+      </button>
+    </div>
+  </header>
+
+  <!-- Основной контейнер -->
+  <main class="max-w-4xl mx-auto px-4 pt-4 space-y-4">
+
+    <!-- Панель переключения вкладок -->
+    <div class="bg-white rounded-2xl p-2.5 shadow-sm border border-slate-200 space-y-2">
+      <div class="grid grid-cols-2 gap-2">
+        <button id="tabBtn_parts" onclick="switchTab('parts')" class="py-3 px-3 rounded-xl font-bold text-base border transition flex items-center justify-center gap-2">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <span>Запчасти и ресурс</span>
+        </button>
+        <button id="tabBtn_brands" onclick="switchTab('brands')" class="py-3 px-3 rounded-xl font-bold text-base border transition flex items-center justify-center gap-2">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 20V10M12 20V4M6 20v-6"/>
+          </svg>
+          <span>Сравнение брендов</span>
+        </button>
+      </div>
+      <button id="tabBtn_history" onclick="switchTab('history')" class="w-full py-2.5 px-3 rounded-xl font-bold text-base border transition flex items-center justify-center gap-2">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2"/>
+        </svg>
+        <span>Хронология и экспорт</span>
+      </button>
+    </div>
+
+    <!-- ВКЛАДКА 1: ЗАПЧАСТИ И РЕСУРС -->
+    <section id="tab_parts" class="space-y-4">
+      <div class="bg-white rounded-2xl p-3 shadow-sm border border-slate-200 flex items-center justify-between gap-2">
+        <button
+          id="toggleAllBtn"
+          onclick="toggleAllCards()"
+          class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-base border border-slate-300 transition"
+        >
+          Свернуть все
+        </button>
+        <button
+          onclick="openNewPartModal()"
+          class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-base border border-slate-300 transition"
+        >
+          + Новый узел
+        </button>
+      </div>
+
+      <div id="partsContainer" class="space-y-4"></div>
+    </section>
+
+    <!-- ВКЛАДКА 2: СРАВНЕНИЕ БРЕНДОВ -->
+    <section id="tab_brands" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+        <h2 class="text-xl font-extrabold text-slate-900 mb-1">Аналитика ресурса по брендам</h2>
+        <p class="text-sm text-slate-600 mb-4">Сравнение всех заменённых деталей по среднему пробегу и стоимости 1 000 км.</p>
+        <div id="brandsContainer" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- ВКЛАДКА 3: ХРОНОЛОГИЯ И ЭКСПОРТ -->
+    <section id="tab_history" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
+        <h2 class="text-xl font-extrabold text-slate-900">Резервное копирование и экспорт</h2>
+        <p class="text-sm text-slate-600">Все изменения автоматически сохраняются в памяти устройства. Вы можете выгрузить таблицу для Excel или сохранить резервную копию.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+          <button onclick="exportCSV()" class="py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-base border border-emerald-600 transition">
+            Скачать таблицу для Excel (CSV)
+          </button>
+          <button onclick="exportJSON()" class="py-3 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-base border border-slate-600 transition">
+            Сохранить резервную копию (JSON)
+          </button>
+        </div>
+        <div class="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200">
+          <label class="cursor-pointer py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm border border-slate-300 transition">
+            Загрузить из JSON
+            <input type="file" accept=".json" onchange="importJSON(event)" class="hidden" />
+          </label>
+          <button onclick="resetToDefault()" class="py-2 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-sm border border-rose-300 transition">
+            Сбросить к исходному Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+        <h3 class="text-lg font-extrabold text-slate-900 mb-3">Хронология всех работ</h3>
+        <div id="timelineContainer" class="space-y-2.5"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- МОДАЛЬНОЕ ОКНО: ЗАПИСАТЬ ЗАМЕНУ -->
+  <div id="addModal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-extrabold text-slate-900">Новая замена запчасти</h3>
+        <button onclick="closeAddModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-300">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Запчасть / узел</label>
+          <select id="modalPartSelect" onchange="updateModalPreview()" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">Дата установки</label>
+            <input id="modalDateInput" type="date" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900" />
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">Пробег (км)</label>
+            <input id="modalOdoInput" type="number" inputmode="numeric" oninput="updateModalPreview()" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-bold text-slate-900" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Бренд и артикул новой детали</label>
+          <input id="modalBrandInput" list="brandSuggestions" type="text" placeholder="Например: Remsa, 1082.00" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900" />
+          <datalist id="brandSuggestions"></datalist>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Цена детали (руб., необязательно)</label>
+          <input id="modalPriceInput" type="number" step="0.01" inputmode="decimal" placeholder="Например: 1850" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900" />
+        </div>
+
+        <div id="modalPreviewBox" class="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-sm text-sky-950"></div>
+      </div>
+
+      <div class="flex gap-2.5 pt-1">
+        <button onclick="closeAddModal()" class="flex-1 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-base border border-slate-300">Отмена</button>
+        <button onclick="saveReplacement()" class="flex-1 h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-base border border-emerald-600 shadow">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО: ДОБАВИТЬ НОВЫЙ УЗЕЛ -->
+  <div id="newPartModal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-extrabold text-slate-900">Добавить новый узел</h3>
+        <button onclick="closeNewPartModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-300">✕</button>
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1">Название запчасти</label>
+        <input id="newPartNameInput" type="text" placeholder="Например: Свечи зажигания" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900" />
+      </div>
+      <div class="flex gap-2.5">
+        <button onclick="closeNewPartModal()" class="flex-1 h-11 rounded-xl bg-slate-100 text-slate-800 font-bold border border-slate-300">Отмена</button>
+        <button onclick="createNewPart()" class="flex-1 h-11 rounded-xl bg-emerald-500 text-white font-extrabold border border-emerald-600">Создать</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'mazda5_parts_tracker_data_v3';
+    const INITIAL_DATA = {"currentOdometer": 290685, "parts": [{"id": "part_1", "name": "Тормозные колодки передние", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "оригинал", "price": null, "lifespan": 64400}, {"date": "2016-04-23", "odometer": 64400, "brand": "Remsa, 1082.00", "price": 1735.0, "lifespan": 116000}, {"date": "2020-10-19", "odometer": 180400, "brand": "Remsa, 1082.00", "price": 1214.0, "lifespan": null}]}, {"id": "part_2", "name": "Тормозные колодки задние", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 132459}, {"date": "2018-10-29", "odometer": 132459, "brand": "Ferodo, FDB1931", "price": 1414.0, "lifespan": 148641}, {"date": "2025-11-10", "odometer": 281100, "brand": "Sangsin, SP 2091", "price": 1260.0, "lifespan": null}]}, {"id": "part_3", "name": "Стабилизатор передний левый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 148175}, {"date": "2019-06-20", "odometer": 148175, "brand": "LYNXauto, C7213LR", "price": 530.0, "lifespan": 58624}, {"date": "2022-01-16", "odometer": 206799, "brand": "LYNXauto, C7213LR", "price": 725.0, "lifespan": 46301}, {"date": "2024-07-20", "odometer": 253100, "brand": "LYNXauto, C7213LR", "price": 1076.0, "lifespan": null}]}, {"id": "part_4", "name": "Стабилизатор передний правый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 148175}, {"date": "2019-06-20", "odometer": 148175, "brand": "Febest, 0523-004", "price": 409.0, "lifespan": 32225}, {"date": "2020-10-19", "odometer": 180400, "brand": "CTR, CLMZ-12", "price": 877.0, "lifespan": 26399}, {"date": "2022-01-16", "odometer": 206799, "brand": "LYNXauto, C7213LR", "price": 725.0, "lifespan": 65481}, {"date": "2025-06-14", "odometer": 272280, "brand": "LYNXauto, C7213LR", "price": 1076.0, "lifespan": null}]}, {"id": "part_5", "name": "Рычаг передний левый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 180400}, {"date": "2020-10-19", "odometer": 180400, "brand": "Masuma, MA-9656L", "price": 4172.0, "lifespan": 53461}, {"date": "2023-07-14", "odometer": 233861, "brand": "CTR, CQ0248L", "price": 5550.0, "lifespan": null}]}, {"id": "part_6", "name": "Рычаг передний правый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 180400}, {"date": "2020-10-19", "odometer": 180400, "brand": "CTR, CQMZ-1R", "price": 4101.0, "lifespan": 101015}, {"date": "2025-11-16", "odometer": 281415, "brand": "LYNXauto, C5171R", "price": 6052.0, "lifespan": 9270}, {"date": "2026-08-25", "odometer": 290685, "brand": "CTR, CQ0248R", "price": 6503.0, "lifespan": null}]}, {"id": "part_7", "name": "Аккумулятор", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 132754}, {"date": "2018-11-03", "odometer": 132754, "brand": "Mutlu, SFB 60А/ч обр. SMF55D", "price": 5050.0, "lifespan": 81703}, {"date": "2022-05-26", "odometer": 214457, "brand": "BOLK, Asia 65А/ч обр. ABJ650", "price": 5272.5, "lifespan": null}]}, {"id": "part_8", "name": "Амортизатор передний правый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 148175}, {"date": "2019-06-20", "odometer": 148175, "brand": "KYB, 339820", "price": 4360.0, "lifespan": null}]}, {"id": "part_9", "name": "Амортизатор передний левый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 148175}, {"date": "2019-06-20", "odometer": 148175, "brand": "KYB, 339821", "price": 4360.0, "lifespan": null}]}, {"id": "part_10", "name": "Лампа ближнего света (Левая)", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 85011}, {"date": "2017-01-14", "odometer": 85011, "brand": "Bosch H11 12V 55W 711", "price": 438.0, "lifespan": 56311}, {"date": "2019-03-10", "odometer": 141322, "brand": "Hella H11 12V 55W", "price": 400.0, "lifespan": 45370}, {"date": "2021-02-23", "odometer": 186692, "brand": "Hella H11 12V 55W", "price": 770.0, "lifespan": 22644}, {"date": "2022-03-02", "odometer": 209336, "brand": "AUTOPAL H11 12V 55W", "price": 263.0, "lifespan": 10891}, {"date": "2022-09-16", "odometer": 220227, "brand": "OSRAM H11 12V 55W", "price": null, "lifespan": 39373}, {"date": "2024-10-06", "odometer": 259600, "brand": "Bosch Eco", "price": 543.0, "lifespan": 31085}, {"date": "2026-08-25", "odometer": 290685, "brand": "Bosch H11 12V 55W 711", "price": 517.0, "lifespan": null}]}, {"id": "part_11", "name": "Лампа ближнего света (Правая)", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "lifespan": 85011}, {"date": "2017-01-14", "odometer": 85011, "brand": "Bosch H11 12V 55W 711", "price": 438.0, "lifespan": 68579}, {"date": "2019-09-06", "odometer": 153590, "brand": "Hella H11 12V 55W", "price": 360.0, "lifespan": 68219}, {"date": "2022-10-03", "odometer": 221809, "brand": "Ganz H11 12V 55W", "price": 170.0, "lifespan": 921}, {"date": "2022-11-06", "odometer": 222730, "brand": "ClearLight Long Life", "price": 250.0, "lifespan": 11131}, {"date": "2023-07-14", "odometer": 233861, "brand": "OSRAM Original Line", "price": 489.0, "lifespan": null}]}]};
+
+    let appData = null;
+    let activeTab = 'parts';
+    let collapsedIds = new Set();
+    let deferredPrompt = null;
+
+    // Регистрация Service Worker для установки на рабочий стол
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('installAppBtn');
+      if (btn) {
+        btn.classList.remove('hidden');
+        btn.classList.add('inline-flex');
+      }
+    });
+
+    async function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('installAppBtn').classList.add('hidden');
+    }
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.parts) && parsed.parts.length > 0) {
+            appData = parsed;
+            recalculateAll();
+            return;
+          }
+        }
+      } catch (e) {}
+      appData = JSON.parse(JSON.stringify(INITIAL_DATA));
+      recalculateAll();
+      saveData();
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (e) {}
+    }
+
+    function recalculateAll() {
+      let maxOdo = Number(appData.currentOdometer) || 0;
+      appData.parts.forEach(part => {
+        part.records.sort((a, b) => a.odometer - b.odometer);
+        for (let i = 0; i < part.records.length; i++) {
+          if (part.records[i].odometer > maxOdo) {
+            maxOdo = part.records[i].odometer;
+          }
+          if (i < part.records.length - 1) {
+            part.records[i].lifespan = Math.max(0, part.records[i + 1].odometer - part.records[i].odometer);
+          } else {
+            part.records[i].lifespan = null;
+          }
+        }
+      });
+      appData.currentOdometer = maxOdo;
+    }
+
+    function formatNumber(num) {
+      if (num === null || num === undefined || isNaN(num)) return '—';
+      return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function formatDateRu(isoStr) {
+      if (!isoStr) return '—';
+      const p = isoStr.split('-');
+      if (p.length !== 3) return isoStr;
+      return `${p[2]}.${p[1]}.${p[0]}`;
+    }
+
+    function pluralYears(n) {
+      const mod10 = n % 10;
+      const mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return `${n} год`;
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${n} года`;
+      return `${n} лет`;
+    }
+
+    function pluralMonths(n) {
+      const mod10 = n % 10;
+      const mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return `${n} месяц`;
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${n} месяца`;
+      return `${n} месяцев`;
+    }
+
+    function formatDuration(startStr, endStr) {
+      if (!startStr) return '';
+      const d1 = new Date(startStr + 'T00:00:00');
+      const d2 = endStr ? new Date(endStr + 'T00:00:00') : new Date();
+      if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return '';
+      if (d2 < d1) return 'дата в будущем';
+
+      let years = d2.getFullYear() - d1.getFullYear();
+      let months = d2.getMonth() - d1.getMonth();
+      if (d2.getDate() < d1.getDate()) {
+        months--;
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+      if (years <= 0 && months <= 0) {
+        const days = Math.max(0, Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)));
+        return days === 0 ? 'менее 1 месяца' : `${days} дн.`;
+      }
+      const parts = [];
+      if (years > 0) parts.push(pluralYears(years));
+      if (months > 0) parts.push(pluralMonths(months));
+      return parts.join(' ');
+    }
+
+    function updateOdometer() {
+      const inp = document.getElementById('odometerInput');
+      const val = parseInt(inp.value, 10);
+      if (!isNaN(val) && val >= 0) {
+        appData.currentOdometer = val;
+        saveData();
+        renderAll();
+      }
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      ['parts', 'brands', 'history'].forEach(t => {
+        const sec = document.getElementById(`tab_${t}`);
+        const btn = document.getElementById(`tabBtn_${t}`);
+        if (t === tab) {
+          sec.classList.remove('hidden');
+          btn.className = btn.className.replace(/bg-slate-\d+\/80|bg-slate-\d+|text-slate-\d+|border-slate-\d+/g, '');
+          btn.classList.add('bg-slate-700', 'text-white', 'border-slate-600', 'shadow-xs');
+        } else {
+          sec.classList.add('hidden');
+          btn.className = btn.className.replace(/bg-slate-\d+\/80|bg-slate-\d+|text-slate-\d+|text-white|border-slate-\d+|shadow-xs/g, '');
+          btn.classList.add('bg-slate-200/80', 'text-slate-800', 'border-slate-300');
+        }
+      });
+      if (tab === 'brands') renderBrands();
+      if (tab === 'history') renderHistory();
+    }
+
+    function toggleCard(id) {
+      if (collapsedIds.has(id)) collapsedIds.delete(id);
+      else collapsedIds.add(id);
+      renderParts();
+    }
+
+    function toggleAllCards() {
+      if (collapsedIds.size === appData.parts.length) {
+        collapsedIds.clear();
+      } else {
+        appData.parts.forEach(p => collapsedIds.add(p.id));
+      }
+      renderParts();
+    }
+
+    function deleteRecord(partId, idx) {
+      const part = appData.parts.find(p => p.id === partId);
+      if (!part) return;
+      if (!confirm(`Удалить запись «${part.records[idx].brand}» от ${formatDateRu(part.records[idx].date)}?`)) return;
+      part.records.splice(idx, 1);
+      recalculateAll();
+      saveData();
+      renderAll();
+    }
+
+    function renderParts() {
+      const container = document.getElementById('partsContainer');
+      const toggleBtn = document.getElementById('toggleAllBtn');
+      toggleBtn.textContent = collapsedIds.size === appData.parts.length ? 'Развернуть все' : 'Свернуть все';
+
+      container.innerHTML = appData.parts.map(part => {
+        const isCollapsed = collapsedIds.has(part.id);
+        const recs = part.records;
+        const currentRec = recs.length ? recs[recs.length - 1] : null;
+        const replacementsCount = Math.max(0, recs.length - 1);
+        const currentRun = currentRec ? Math.max(0, appData.currentOdometer - currentRec.odometer) : 0;
+        const currentWorkDuration = currentRec ? formatDuration(currentRec.date, null) : '—';
+
+        const finishedLifespans = recs.filter(r => r.lifespan !== null).map(r => r.lifespan);
+        const maxLifespan = Math.max(...finishedLifespans, currentRun, 1);
+
+        const rowsHtml = recs.map((rec, idx) => {
+          const isCurrent = idx === recs.length - 1;
+          const nextRec = !isCurrent ? recs[idx + 1] : null;
+          const runKm = isCurrent ? currentRun : rec.lifespan;
+          const pct = Math.min(100, Math.round((runKm / maxLifespan) * 100));
+          const durationText = isCurrent
+            ? `в работе: ${formatDuration(rec.date, null)}`
+            : formatDuration(rec.date, nextRec ? nextRec.date : null);
+          const costPer1k = (rec.price && runKm > 0) ? ((rec.price / runKm) * 1000).toFixed(1) : null;
+
+          return `
+            <div class="p-3.5 rounded-2xl border ${isCurrent ? 'bg-emerald-50/70 border-emerald-200' : 'bg-slate-50 border-slate-200'} space-y-2">
+              <div class="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="text-base sm:text-lg font-extrabold text-slate-900">${rec.brand}</span>
+                    ${isCurrent ? '<span class="px-2 py-0.5 text-xs font-bold rounded-full bg-emerald-500 text-white">Сейчас стоит</span>' : ''}
+                  </div>
+                  <div class="text-sm sm:text-base font-medium text-slate-600 mt-0.5">
+                    Установлена: <strong class="text-slate-800">${formatDateRu(rec.date)}</strong> · Одометр: <strong class="text-slate-800">${formatNumber(rec.odometer)} км</strong>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-lg sm:text-xl font-black ${isCurrent ? 'text-emerald-700' : 'text-sky-700'}">
+                    ${formatNumber(runKm)} км
+                  </div>
+                  <div class="text-sm font-semibold text-slate-600">${durationText}</div>
+                </div>
+              </div>
+
+              <!-- Шкала ресурса -->
+              <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full rounded-full ${isCurrent ? 'bg-emerald-500' : 'bg-sky-500'}" style="width: ${pct}%"></div>
+              </div>
+
+              <div class="flex items-center justify-between text-sm text-slate-600 pt-0.5">
+                <div class="flex flex-wrap gap-3">
+                  <span>Цена: <strong class="text-slate-800">${rec.price !== null ? formatNumber(rec.price) + ' ₽' : 'заводская'}</strong></span>
+                  ${costPer1k ? `<span>Цена 1 000 км: <strong class="text-slate-800">${costPer1k} ₽</strong></span>` : ''}
+                </div>
+                ${recs.length > 1 ? `<button onclick="deleteRecord('${part.id}', ${idx})" class="text-xs font-bold text-rose-600 hover:text-rose-800 px-2 py-1 rounded-lg hover:bg-rose-50">Удалить</button>` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <article class="bg-white rounded-3xl p-4 sm:p-5 shadow-sm border border-slate-200 space-y-3.5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3">
+                <button
+                  onclick="toggleCard('${part.id}')"
+                  class="mt-0.5 w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-700 shrink-0 transition"
+                  title="Свернуть / развернуть"
+                >
+                  <svg class="w-5 h-5 transition-transform ${isCollapsed ? '-rotate-90' : ''}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </button>
+                <div>
+                  <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">${part.name}</h2>
+                  <div class="mt-1 inline-block px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-300 text-xs sm:text-sm font-bold text-slate-700">
+                    Замен: ${replacementsCount}
+                  </div>
+                  <div class="mt-2 space-y-1 text-sm sm:text-base text-slate-700">
+                    <div>Сейчас стоит: <strong class="text-slate-900">${currentRec ? currentRec.brand : '—'}</strong></div>
+                    <div>Ресурс на данный момент: <strong class="text-sky-700 text-base sm:text-lg">${formatNumber(currentRun)} км</strong></div>
+                    <div>В работе на сегодня: <strong class="text-emerald-700">${currentWorkDuration}</strong></div>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onclick="openAddModal('${part.id}')"
+                class="px-4 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-extrabold text-sm sm:text-base border border-emerald-600 shadow-xs transition shrink-0 flex items-center gap-1.5"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+                </svg>
+                <span>Заменить</span>
+              </button>
+            </div>
+
+            ${!isCollapsed ? `<div class="space-y-2.5 pt-2 border-t border-slate-100">${rowsHtml}</div>` : ''}
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderBrands() {
+      const container = document.getElementById('brandsContainer');
+      const brandMap = {};
+
+      appData.parts.forEach(part => {
+        part.records.forEach(rec => {
+          if (rec.lifespan !== null && rec.lifespan > 0) {
+            const bName = rec.brand.split(',')[0].trim();
+            if (!brandMap[bName]) {
+              brandMap[bName] = { brand: bName, totalKm: 0, count: 0, totalCost: 0, costKm: 0, items: [] };
+            }
+            brandMap[bName].totalKm += rec.lifespan;
+            brandMap[bName].count += 1;
+            if (rec.price) {
+              brandMap[bName].totalCost += rec.price;
+              brandMap[bName].costKm += rec.lifespan;
+            }
+            brandMap[bName].items.push(`${part.name} (${formatNumber(rec.lifespan)} км)`);
+          }
+        });
+      });
+
+      const list = Object.values(brandMap).sort((a, b) => (b.totalKm / b.count) - (a.totalKm / a.count));
+      if (!list.length) {
+        container.innerHTML = '<p class="text-base text-slate-500">Пока нет завершённых циклов службы запчастей для сравнения.</p>';
+        return;
+      }
+
+      container.innerHTML = list.map(b => {
+        const avgKm = Math.round(b.totalKm / b.count);
+        const avgCost1k = b.costKm > 0 ? ((b.totalCost / b.costKm) * 1000).toFixed(1) : null;
+        return `
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-lg font-extrabold text-slate-900">${b.brand}</span>
+              <span class="text-lg font-black text-sky-700">~ ${formatNumber(avgKm)} км</span>
+            </div>
+            <div class="text-sm font-semibold text-slate-600">
+              Завершённых циклов: ${b.count} ${avgCost1k ? `· Средняя цена 1 000 км: <strong class="text-emerald-700">${avgCost1k} ₽</strong>` : ''}
+            </div>
+            <div class="text-sm text-slate-500">${b.items.join('; ')}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('timelineContainer');
+      const all = [];
+      appData.parts.forEach(part => {
+        part.records.forEach(rec => {
+          if (rec.odometer > 0) {
+            all.push({ partName: part.name, ...rec });
+          }
+        });
+      });
+      all.sort((a, b) => b.odometer - a.odometer);
+
+      container.innerHTML = all.map(item => `
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+          <div>
+            <div class="text-base font-extrabold text-slate-900">${item.partName}</div>
+            <div class="text-sm font-semibold text-slate-700">${item.brand}</div>
+            <div class="text-sm text-slate-500">${formatDateRu(item.date)} · ${formatNumber(item.odometer)} км</div>
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-base font-extrabold text-slate-800">${item.price ? formatNumber(item.price) + ' ₽' : '—'}</div>
+            ${item.lifespan ? `<div class="text-sm font-bold text-sky-700">прошла ${formatNumber(item.lifespan)} км</div>` : '<div class="text-xs font-bold text-emerald-600">в работе</div>'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openAddModal(preselectPartId) {
+      const sel = document.getElementById('modalPartSelect');
+      sel.innerHTML = appData.parts.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+      if (preselectPartId) sel.value = preselectPartId;
+
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('modalDateInput').value = today;
+      document.getElementById('modalOdoInput').value = appData.currentOdometer;
+      document.getElementById('modalBrandInput').value = '';
+      document.getElementById('modalPriceInput').value = '';
+
+      updateModalPreview();
+      document.getElementById('addModal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      document.getElementById('addModal').classList.add('hidden');
+    }
+
+    function updateModalPreview() {
+      const partId = document.getElementById('modalPartSelect').value;
+      const newOdo = parseInt(document.getElementById('modalOdoInput').value, 10) || 0;
+      const part = appData.parts.find(p => p.id === partId);
+      const box = document.getElementById('modalPreviewBox');
+      const datalist = document.getElementById('brandSuggestions');
+
+      if (!part) return;
+      const brands = [...new Set(part.records.map(r => r.brand).filter(b => b && !b.toLowerCase().includes('оригинал')))];
+      datalist.innerHTML = brands.map(b => `<option value="${b}">`).join('');
+
+      if (part.records.length > 0) {
+        const prev = part.records[part.records.length - 1];
+        const diff = newOdo - prev.odometer;
+        if (diff >= 0) {
+          box.innerHTML = `Снимаемая деталь <strong>${prev.brand}</strong> (установлена на ${formatNumber(prev.odometer)} км) получит итоговый ресурс: <strong class="text-emerald-700 text-base">${formatNumber(diff)} км</strong>.`;
+        } else {
+          box.innerHTML = `<span class="text-rose-700 font-bold">Внимание: новый пробег меньше предыдущего (${formatNumber(prev.odometer)} км).</span>`;
+        }
+      } else {
+        box.innerHTML = 'Это будет первая запись для данного узла.';
+      }
+    }
+
+    function saveReplacement() {
+      const partId = document.getElementById('modalPartSelect').value;
+      const dateVal = document.getElementById('modalDateInput').value;
+      const odoVal = parseInt(document.getElementById('modalOdoInput').value, 10);
+      const brandVal = document.getElementById('modalBrandInput').value.trim();
+      const priceRaw = document.getElementById('modalPriceInput').value.trim();
+      const priceVal = priceRaw ? parseFloat(priceRaw) : null;
+
+      if (!dateVal || isNaN(odoVal) || !brandVal) {
+        alert('Пожалуйста, заполните дату, пробег и бренд новой запчасти.');
+        return;
+      }
+
+      const part = appData.parts.find(p => p.id === partId);
+      if (!part) return;
+
+      part.records.push({
+        date: dateVal,
+        odometer: odoVal,
+        brand: brandVal,
+        price: priceVal,
+        lifespan: null
+      });
+
+      if (odoVal > appData.currentOdometer) {
+        appData.currentOdometer = odoVal;
+      }
+
+      recalculateAll();
+      saveData();
+      closeAddModal();
+      renderAll();
+    }
+
+    function openNewPartModal() {
+      document.getElementById('newPartNameInput').value = '';
+      document.getElementById('newPartModal').classList.remove('hidden');
+    }
+
+    function closeNewPartModal() {
+      document.getElementById('newPartModal').classList.add('hidden');
+    }
+
+    function createNewPart() {
+      const name = document.getElementById('newPartNameInput').value.trim();
+      if (!name) return;
+      appData.parts.push({
+        id: 'part_' + Date.now(),
+        name: name,
+        records: []
+      });
+      saveData();
+      closeNewPartModal();
+      renderAll();
+      openAddModal(appData.parts[appData.parts.length - 1].id);
+    }
+
+    function exportCSV() {
+      const rows = [['Узел / Запчасть', 'Дата установки', 'Пробег установки (км)', 'Бренд и артикул', 'Цена (руб)', 'Ресурс детали (км)']];
+      appData.parts.forEach(p => {
+        p.records.forEach(r => {
+          rows.push([
+            `"${p.name.replace(/"/g, '""')}"`,
+            r.date,
+            r.odometer,
+            `"${r.brand.replace(/"/g, '""')}"`,
+            r.price !== null ? r.price : '',
+            r.lifespan !== null ? r.lifespan : ''
+          ]);
+        });
+      });
+      const csvContent = '\uFEFF' + rows.map(e => e.join(';')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Mazda5_запчасти_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    }
+
+    function exportJSON() {
+      const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Mazda5_резервная_копия_${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.parts)) {
+            appData = parsed;
+            recalculateAll();
+            saveData();
+            renderAll();
+            alert('Данные успешно загружены!');
+          }
+        } catch (err) {
+          alert('Ошибка чтения файла резервной копии.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetToDefault() {
+      if (!confirm('Вернуть исходные данные из вашего файла Excel? Текущие изменения будут заменены.')) return;
+      appData = JSON.parse(JSON.stringify(INITIAL_DATA));
+      recalculateAll();
+      saveData();
+      renderAll();
+    }
+
+    function renderAll() {
+      document.getElementById('odometerInput').value = appData.currentOdometer;
+      renderParts();
+      if (activeTab === 'brands') renderBrands();
+      if (activeTab === 'history') renderHistory();
+    }
+
+    loadData();
+    switchTab('parts');
+    renderAll();
+  </script>
+</body>
+</html>
