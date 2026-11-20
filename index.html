@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mazda 5 — Учёт ресурса запчастей</title>
+  <meta name="theme-color" content="#0f172a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mazda 5 Запчасти" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAPHUlEQVR4nO2deXgU5QHG3w2JSyL3YWJEqAooVEVBkHCISqAIIUoIBCiKylHFVtSKLU9rpfIoWkTEm0utgCiiElDEBMIRkRs5FK2gQDg0JSCBJBwhm/5BszDZ2d25r+/9/ZX5Znfm+ybv7ztm5kkAQgghhBBCCCGEEEII8TQ+uyughrqJrSvtrgNRRnHhTldky7GVZNi9hxOlcFSFGHpxcIoMjqgEgy8udotg68kZfFKFXSLYclIGn4TDahEsPRmDT5RilQgxVpwEYPiJOqzKi+mWMfhEL2aOBqaOAAw/MQIzc2SaAAw/MRKz8mSKAAw/MQMzcmW4AAw/MROj82WoAAw/sQIjc2aYAAw/sRKj8maIAAw/sQMjcqdbAIaf2Ine/OkSgOEnTkBPDi17FYIQJ6JZAPb+xElozaMmARh+4kS05JJTICI0qgVg70+cjNp8cgQgQqNKAPb+xA2oySlHACI0igVg70/chNK8cgQgQqNIAPb+xI0oyS1HACI0FIAITdQ/N8HpjzH43s1S/Z3Kez4woSbiEenPqlAAE9ASdqVQCvVQAAswM/ThoAzKoAAmYUfow0EZwkMBDMZJwa8ORQhFswAMvxQnB786FEFKOAkogALcFPzqUIRzhBOAzwGi4ObwA+6vv9lQgAh4JTxeaYcZcAokg1mBUTMdcUIdvATXAAoxKnhmBM3JdXM6FEABegNmZbDcVFcnQAGioCdQdobJrfW2GgoQAa0hclKAvNAGM6EAYfDaW5pea49R8DmADF4Mi5b6iXybVFgBvBj+KiiBcoScAqn9Zbsl+HKI1NZIcAqkEbcHwu31NxvhBFDTI3olPE54Au1UhBJAxPBXQQnkEUYAkcNfBSUIRRgBCJFDCAHY+5+Ho4AUIQRQitfDX4Uo7VSC5wVQ2ouJFgql7fX6KOB5AUSlxbIxdlfBFXhaAFF7/6rwR5OAo4DHBRCR6qHnSBAZ4QXwUu8fLuyRJPBS+7XgWQG8PGzLEa2n1zsSePV6elYAJXil91Ma7nCf88p10ILQAogI1wRSPCmAV4drOdQGelfqVM3n8uJ19aQASvDCsG9k+L1wPbQgrABux8qe38tQABfC8BsHBXAZDL+xeE4ALy7UqnDCHRyvXV/PCaAENy74tIRfbe/vxuuiFyEFcBtWhF9UKIAGrJyKMPzmQgFUovRVYyPPpQaGXx0UQAVOf9WY4VcPBVCIlleNzThfOBh+bVAABZj9qrHe4zH82qEAUdD7qrFZ56uC4dcHBYiA2jDqlYDhtx4KEAEtAdMqAcNvDxQgClZI4LS7SSIhpABq32cxs7d10r1+r73nowTPCWDW+yxqQ6ck2E4Kv1K89r6Q5wQwEyMlcGP4vQgFUIkREjD8zoECaMCM6ZCR5yPKEVYAvQs+rRI49XaniAtgwKMCWLVQM3skcFrP77UFMOBRAbyA08LvVYQWwIhh34ygWh1+Uac/gIcFsHK4NjKwTu35vTj9ATwsgFKM6v2cGtxoiNz7AxTAUPRK4FaJ3IynBbDjXwBpDbEd4Rf1X0hdiKcFsAu1YWbPbx+eF8CufwSnNNR2hZ+9/zk8L4AarJKgqtzp4RcBX6SddRNbV1pVEbNR80v3cq8n6nUoLtwpm3WOAERohBFATW/m1SmCqL1/JIQRABBbAoZfHqEEAMSUgOEPj3ACqMXtEri9/mYjzF2g6mgJhpt6R6+3Ty28C1QNLb9st/SmDL9yhBUA8KYEDL86hJ0CXYjWUDspOF5og5mEmwJRgP+jp2e3M0RurbfVUAAF6J3eWBkoN9XVCVAAhRg1xzcjYE6um9OhACowa6HrhIdwIoYfoACacPodHzWIGvwq+BxAA14JjVfaYQYUIApuD4/b6282nAKpwE1TIgZfCtcABuJkERh8eSiACThJBAY/MhTAZOyQgaFXDgWwEDNlYOi1QQFshm9p2gsFIELDB2GEyEABiNBQACI0FIAIDQUgQkMBiNBQACI0FIAIDQUgQkMBiNBQACI0FIAIDQUgQkMBiNBQACI0FIAIDQUgQhNr58mnTBqPIYMyQsq/+34Xbu3RP+z3/H4/tm7IRYMG9UL2PfPcVLz82qyI561Xry6+2ZKHuLi4kH2db03H7h/3hv3u+Cf/jAdHDYt4/Eg89sR4zJ33cXA73DUoP3sW5WfKcfxECY4cOYp9BQewbftOfLokN2L95NDTXjV0SmmPT+ZHvvYXcrjoCK698TZDzq0VR44Ara5pgS6dO4Tdn5nRRzb8SumX3ks2DAAwsH+65uMaSVxsLBIS4pGU2Bi/bX01evfqjnFP/AlfrsjG/PemoUXzKxUfyw3ttQtHCgAAo4YP1bRPCVkD7gy7b0D/NMTEOPaywOfzoVvXFOR8Ng93pfdS9B03t9dsbJ0CRaJH91vQrGkT7Cs4ICm/pWtHXHN1c83HbX7Vb3DjDdeG3Z+cnITOndoj/8v1svvHT5iM8RMmRzzH5U2SkbvkfdSvX09Sfqz4OL5csyFqHQff/SDyVq5BzZp+JCVegpSb22HUiKFo3apl8DMJCfF4bepEHP31GFbnrwt7LL3t1UP24qUYNfoJw49rJI5VPyYmBiPuGxJSrrf3H5gpHfLLz57F0aPHpJ/RMS3w+/14a/qUkPAHAgE89PC4EKEjcerUaezdtx/z5i9E6h0D8e6cDyX7Y2Nr4PWXJyIhIT7sMcxur9uJKEC4PyVhJpu3bA/+PHjQXahV6+Lg9pVXNEXq7V2D25s2b1N1bJ/Ph8x+fSRlK1euwcLFSyVlab1TcfHFCaqOXcWkiU/i+utahZS/MOVNLMvL13RMAKioCOCvf39Gcn0AoHGjhrj3bvm/OWRFe91ApBw7bgSYNnNO8OfatWph0AXz15HDh8LnO9+W6bPmQA1dOnfAZZddKin7ZNFSLMz+XFKWkBCPtN6pqo4NAPcPG4SsAaG9aU7uKrw4dZrq41WnoiKAqa/ODClPT+sp+3mz2xuNzikdsGHNEhTs3oh9uzbi6/U5eGfmSxiY2TfsotxqHCfA51/kYf+BQ8Ht4fcNgc/nQ53atZB1wXC+bsMWbN/xnapjVx/qT506jaU5K7Bh01YcOvSLZF9WprppwU3t2uDp8aHz3T17C/DQmHGorDTmb4zlr1mPs2crJGVtrm8tOw0ys71KaNSoAZo1bQK/34+aNf1ITk7CHb+7Ha9MeQYrchboWssZheMECAQqMOvtecHtqmnP0CGZkmF6+kx1vb9cL5e7fDVKS8tQWVmJ7E+/kOzrlNI+pPcMxyWNG2HWtBcRFyu9p1BWdhL3jngEx0+UqKprJMrKTqKw8L+SspiYGFzSuJGkzMz2GkGL5ldgwfszkJycZNk55XCcAAAwd95HKC0tC24/MPIeDL93UHB7/4FDWJqTp+qYab1TQ3rJhYvOTwUWZkvnxT6fDwMy0qIeNza2Bma8+QKSEhuH7Hvk8afw/X92q6qnEkouuDZV1KlTS7JtVnsjEaiowFfrNmH8hMlIzxiGdim90LR5e3TsmoZ/PD0ppCNo3Kgh/vaXh3WdUy9RBbBjIXz8RAk+WLAouN2lcwc0aZIc3J719jxUVARUHTMrU3ovvKSkFLnLzy9Kt27/Fnv2Fkg+U/0Oihz//MdYdOzQNqT8zRnvIrvaYtMoasksWIuLT0i2zWpvJNZt2IJ+A+7HG9P/jfUbv8aBA4dw+vRp7NlbgGkzZmPA4FEIBKS/t759eqBmTb+u80YiWn4dOQIAwIxZc2TnzaWlZZg77yNVx0pOTkKnlJskZUtzVuD06dOSsuzF0mnBVVc2w03t2oQ9bv9+fWRv1X61diMmPDtFVR2VkpAQj6SkRElZIBDA4aIjwW2z2quXrdu+wbr1myVlfr8fLVsof6ptNI59EPbTngIsy8tHj+63SMrf/zBb9Zxa7mlnZkYaMhUM+QP795W93dq6VUtMfv6pkPJDPxdi5OixIQtVo+jWNQU1akjbsnXbtygrOxncNqO9RnGw2uIbAOrUqW3a+aKhaASwYxoEhN7mrKysxMy35qo+zoCMvprrcGd6L1x00UWSsnp16+CdmS8hPr6mpLy8vBzD//AYioqOaj5fJGrUiMGYP44IKV/8Wa5k2+j2GsllMoveY8eOm3IuJbl17BQIAFbnr5MsIpctX42f9hRE+EYobW+8Di2aX6G5DvXq1kGvnrcGt2NiYvD6K8+hWdMmIZ8d9+REbPl6h+ZzRSI2tgb+9eyTIa81FBUdxTuzz/8jDaPbayQ3tLkWHW9uJykrKSnFD7t+MuV8SlA8BSou3Omz4x9mdEsNfVVYDdUXdpWVlbihfSp+KTws+/m42Fh8t2M1atc6f1dlYGY6Fn2aAwB4/NEH0P22LiHfe++DTzB77gJdda2O3+9HUmJjdE5pj5HDfy95Fwg492Bs9MPjJNMfo9urhk1rlyJ/zXqs+Wojftj1IwoLi/DrsWIkX5qInj26Yexjo0OmZvM/WowzZ86oPlc0lM5aHLsGMIK4uDj0q/bG5LYdO8OGATj3rszKVWvRt0+PYNlt3TqjcaOGOFx0BGm9e8h+b0hWPwzJ6he1TktzVmDY8DERPzNv9htRj1NWdhKPjn0Kq/LXBsvMaK8aLm+SrPg6AMCu3Xvw/KRXVZ3DaFRNgexaC2ilZ2o31KtXV1KWk7sq6vdyl0s/ExtbAxn9ehtaNz2szl+Hnn0GY+Ei6W1WN7U3b+UaZAwcjmPFxs//1eTU0yOA3Hs51X/ZcizLy0cgEJAM11mZ6Zg2Y7ah9YtERUUA5eXlOH7iBIqKjqJg/0Fs274Tiz/Lwa7de2S/Y3d726X0QscObdGxQ1u0btUSDRvWR4MG9ZEQH4+S0lIcPPgzNm/Zjo8XLsHaardD7UJTj85/nkecitpZiqPvAhFiNpoEcNtagIiBllxqHgEoAXESWvPIKRARGl0CcBQgTkBPDnWPAJSA2Ine/BkyBaIExA6MyJ1hawBKQKzEqLwZugimBMQKjMyZ4XeBKAExE6PzZcptUEpAzMCMXJn2HIASECMxK0+mPgijBMQIzMyRZQHlG6RELVZ0oJa9CsHRgKjBqrzYEkqOBiQcVneUtvbKFIFUYdcMwRHTEoogLnZPjR0hQBUUQRzsDn4VjqiEHJTBezgl9BfiuApFglK4ByeGnRBCCCGEEEIIIYSIyv8AsSMZd+ho9hgAAAAASUVORK5CYII=" />
+  <link rel="apple-touch-icon" href="data:image/png;base64,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" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      background-color: #f1f5f9;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .table-scroll::-webkit-scrollbar {
+      height: 8px;
+    }
+    .table-scroll::-webkit-scrollbar-track {
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    .table-scroll::-webkit-scrollbar-thumb {
+      background: #94a3b8;
+      border-radius: 9999px;
+    }
+    .table-scroll::-webkit-scrollbar-thumb:hover {
+      background: #64748b;
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-14">
+
+  <!-- Верхняя шапка -->
+  <header class="bg-slate-900 text-white shadow-lg">
+    <div class="max-w-4xl mx-auto px-4 py-5">
+      <div class="flex items-center justify-between gap-3 mb-4">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center shadow-inner shrink-0">
+            <svg class="w-7 h-7 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M8.5 12.2l2.5 2.5 4.8-5.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <h1 class="text-2xl font-extrabold tracking-tight">Mazda 5</h1>
+              <span class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30">2012 г.в.</span>
+            </div>
+            <p class="text-sm text-slate-300 mt-0.5">Учёт замен и аналитика ресурса запчастей</p>
+          </div>
+        </div>
+
+        <!-- Кнопка установки на рабочий стол -->
+        <button id="installAppBtn" onclick="installPWA()" class="hidden px-3.5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm border border-sky-300 shadow transition items-center gap-1.5 shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/>
+          </svg>
+          Установить
+        </button>
+      </div>
+
+      <!-- Блок текущего одометра (выровненный по одной линии) -->
+      <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-3.5 mb-3.5">
+        <label for="odometerInput" class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+          Текущий одометр
+        </label>
+        <div class="flex items-stretch gap-3">
+          <div class="relative flex-1">
+            <input
+              id="odometerInput"
+              type="number"
+              inputmode="numeric"
+              class="w-full h-12 pl-4 pr-12 rounded-xl bg-slate-900 border border-slate-600 text-amber-400 font-extrabold text-xl focus:outline-none focus:border-emerald-400 transition"
+              placeholder="290685"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400 pointer-events-none">км</span>
+          </div>
+          <button
+            onclick="updateOdometer()"
+            class="h-12 px-6 rounded-xl bg-slate-700 hover:bg-slate-600 active:scale-[0.99] text-white font-bold text-base border border-slate-500 transition shrink-0"
+          >
+            Обновить
+          </button>
+        </div>
+      </div>
+
+      <!-- Главная кнопка добавления замены -->
+      <button
+        onclick="openAddModal()"
+        class="w-full h-12 rounded-2xl bg-emerald-500 hover:bg-emerald-400 active:scale-[0.99] text-slate-950 font-extrabold text-lg border border-emerald-300 shadow-md transition flex items-center justify-center gap-2"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+        </svg>
+        Записать замену
+      </button>
+    </div>
+  </header>
+
+  <!-- Основной контейнер -->
+  <main class="max-w-4xl mx-auto px-4 pt-4 space-y-4">
+
+    <!-- Панель переключения вкладок -->
+    <div class="bg-white rounded-3xl p-3 shadow-sm border border-slate-200 space-y-2.5">
+      <div class="grid grid-cols-2 gap-2.5">
+        <button id="tabBtn_parts" onclick="switchTab('parts')" class="py-3.5 px-3 rounded-2xl font-bold text-base border transition flex items-center justify-center gap-2.5">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <span class="leading-tight">Запчасти и ресурс</span>
+        </button>
+        <button id="tabBtn_brands" onclick="switchTab('brands')" class="py-3.5 px-3 rounded-2xl font-bold text-base border transition flex items-center justify-center gap-2.5">
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 20V10M12 20V4M6 20v-6"/>
+          </svg>
+          <span class="leading-tight">Сравнение брендов</span>
+        </button>
+      </div>
+      <button id="tabBtn_history" onclick="switchTab('history')" class="w-full py-3 px-3 rounded-2xl font-bold text-base border transition flex items-center justify-center gap-2.5">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2"/>
+        </svg>
+        <span>Хронология и экспорт</span>
+      </button>
+    </div>
+
+    <!-- ВКЛАДКА 1: ЗАПЧАСТИ И РЕСУРС -->
+    <section id="tab_parts" class="space-y-4">
+      <div class="bg-white rounded-3xl p-3.5 shadow-sm border border-slate-200 flex items-center justify-between gap-2.5">
+        <button
+          id="toggleAllBtn"
+          onclick="toggleAllCards()"
+          class="px-5 py-2.5 rounded-2xl bg-slate-200/85 hover:bg-slate-300/80 text-slate-800 font-bold text-base border border-slate-300 transition"
+        >
+          Свернуть все
+        </button>
+        <button
+          onclick="openNewPartModal()"
+          class="px-4 py-2.5 rounded-2xl bg-slate-200/85 hover:bg-slate-300/80 text-slate-800 font-bold text-base border border-slate-300 transition"
+        >
+          + Новый узел
+        </button>
+      </div>
+
+      <div id="partsContainer" class="space-y-4"></div>
+    </section>
+
+    <!-- ВКЛАДКА 2: СРАВНЕНИЕ БРЕНДОВ -->
+    <section id="tab_brands" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+        <h2 class="text-xl font-extrabold text-slate-900 mb-1">Аналитика ресурса по брендам</h2>
+        <p class="text-sm text-slate-600 mb-4">Сравнение всех заменённых деталей по среднему пробегу и стоимости 1 000 км.</p>
+        <div id="brandsContainer" class="space-y-3"></div>
+      </div>
+    </section>
+
+    <!-- ВКЛАДКА 3: ХРОНОЛОГИЯ И ЭКСПОРТ -->
+    <section id="tab_history" class="hidden space-y-4">
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-3">
+        <h2 class="text-xl font-extrabold text-slate-900">Резервное копирование и экспорт</h2>
+        <p class="text-sm text-slate-600">Все изменения автоматически сохраняются в памяти устройства. Вы можете выгрузить таблицу для Excel или сохранить резервную копию.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+          <button onclick="exportCSV()" class="py-3 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-base border border-emerald-600 transition">
+            Скачать таблицу для Excel (CSV)
+          </button>
+          <button onclick="exportJSON()" class="py-3 px-4 rounded-xl bg-slate-700 hover:bg-slate-600 text-white font-bold text-base border border-slate-600 transition">
+            Сохранить резервную копию (JSON)
+          </button>
+        </div>
+        <div class="pt-2 flex flex-wrap items-center justify-between gap-2 border-t border-slate-200">
+          <label class="cursor-pointer py-2 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-sm border border-slate-300 transition">
+            Загрузить из JSON
+            <input type="file" accept=".json" onchange="importJSON(event)" class="hidden" />
+          </label>
+          <button onclick="resetToDefault()" class="py-2 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-sm border border-rose-300 transition">
+            Сбросить к исходному Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200">
+        <h3 class="text-lg font-extrabold text-slate-900 mb-3">Хронология всех работ</h3>
+        <div id="timelineContainer" class="space-y-2.5"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- МОДАЛЬНОЕ ОКНО: ЗАПИСАТЬ / РЕДАКТИРОВАТЬ ЗАМЕНУ -->
+  <div id="addModal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-3.5 my-auto">
+      <div class="flex items-center justify-between">
+        <h3 id="modalTitle" class="text-xl font-extrabold text-slate-900">Новая замена запчасти</h3>
+        <button onclick="closeAddModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-300">✕</button>
+      </div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Запчасть / узел</label>
+          <select id="modalPartSelect" onchange="updateModalPreview()" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900 disabled:opacity-60"></select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">Дата установки</label>
+            <input id="modalDateInput" type="date" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900" />
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-slate-700 mb-1">Пробег (км)</label>
+            <input id="modalOdoInput" type="number" inputmode="numeric" oninput="updateModalPreview()" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-bold text-slate-900" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Бренд и артикул детали</label>
+          <input id="modalBrandInput" list="brandSuggestions" type="text" placeholder="Например: Remsa, 1082.00" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900" />
+          <datalist id="brandSuggestions"></datalist>
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Цена детали (руб., необязательно)</label>
+          <input id="modalPriceInput" type="number" step="0.01" inputmode="decimal" placeholder="Например: 1850" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-1">Примечание (необязательно)</label>
+          <input id="modalNoteInput" type="text" placeholder="Например: меняли в паре, скрипели, артикул..." class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-medium text-slate-900" />
+        </div>
+
+        <div id="modalPreviewBox" class="p-3.5 rounded-2xl bg-sky-50 border border-sky-200 text-sm text-sky-950"></div>
+      </div>
+
+      <div class="flex gap-2.5 pt-1">
+        <button onclick="closeAddModal()" class="flex-1 h-12 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-base border border-slate-300">Отмена</button>
+        <button onclick="saveReplacement()" class="flex-1 h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-base border border-emerald-600 shadow">Сохранить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- МОДАЛЬНОЕ ОКНО: ДОБАВИТЬ НОВЫЙ УЗЕЛ -->
+  <div id="newPartModal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xl font-extrabold text-slate-900">Добавить новый узел</h3>
+        <button onclick="closeNewPartModal()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold border border-slate-300">✕</button>
+      </div>
+      <div>
+        <label class="block text-sm font-bold text-slate-700 mb-1">Название запчасти</label>
+        <input id="newPartNameInput" type="text" placeholder="Например: Свечи зажигания" class="w-full h-11 px-3 rounded-xl bg-slate-50 border border-slate-300 text-base font-semibold text-slate-900" />
+      </div>
+      <div class="flex gap-2.5">
+        <button onclick="closeNewPartModal()" class="flex-1 h-11 rounded-xl bg-slate-100 text-slate-800 font-bold border border-slate-300">Отмена</button>
+        <button onclick="createNewPart()" class="flex-1 h-11 rounded-xl bg-emerald-500 text-white font-extrabold border border-emerald-600">Создать</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'mazda5_parts_tracker_data_v4';
+    const INITIAL_DATA = {"currentOdometer": 290685, "parts": [{"id": "part_1", "name": "Тормозные колодки передние", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "оригинал", "price": null, "note": "", "lifespan": 64400}, {"date": "2016-04-23", "odometer": 64400, "brand": "Remsa, 1082.00", "price": 1735.0, "note": "", "lifespan": 116000}, {"date": "2020-10-19", "odometer": 180400, "brand": "Remsa, 1082.00", "price": 1214.0, "note": "", "lifespan": null}]}, {"id": "part_2", "name": "Тормозные колодки задние", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 132459}, {"date": "2018-10-29", "odometer": 132459, "brand": "Ferodo, FDB1931", "price": 1414.0, "note": "", "lifespan": 148641}, {"date": "2025-11-10", "odometer": 281100, "brand": "Sangsin, SP 2091", "price": 1260.0, "note": "", "lifespan": null}]}, {"id": "part_3", "name": "Стабилизатор передний левый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 148175}, {"date": "2019-06-20", "odometer": 148175, "brand": "LYNXauto, C7213LR", "price": 530.0, "note": "", "lifespan": 58624}, {"date": "2022-01-16", "odometer": 206799, "brand": "LYNXauto, C7213LR", "price": 725.0, "note": "", "lifespan": 46301}, {"date": "2024-07-20", "odometer": 253100, "brand": "LYNXauto, C7213LR", "price": 1076.0, "note": "", "lifespan": null}]}, {"id": "part_4", "name": "Стабилизатор передний правый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 148175}, {"date": "2019-06-20", "odometer": 148175, "brand": "Febest, 0523-004", "price": 409.0, "note": "", "lifespan": 32225}, {"date": "2020-10-19", "odometer": 180400, "brand": "CTR, CLMZ-12", "price": 877.0, "note": "", "lifespan": 26399}, {"date": "2022-01-16", "odometer": 206799, "brand": "LYNXauto, C7213LR", "price": 725.0, "note": "", "lifespan": 65481}, {"date": "2025-06-14", "odometer": 272280, "brand": "LYNXauto, C7213LR", "price": 1076.0, "note": "", "lifespan": null}]}, {"id": "part_5", "name": "Рычаг передний левый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 180400}, {"date": "2020-10-19", "odometer": 180400, "brand": "Masuma, MA-9656L", "price": 4172.0, "note": "", "lifespan": 53461}, {"date": "2023-07-14", "odometer": 233861, "brand": "CTR, CQ0248L", "price": 5550.0, "note": "", "lifespan": null}]}, {"id": "part_6", "name": "Рычаг передний правый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 180400}, {"date": "2020-10-19", "odometer": 180400, "brand": "CTR, CQMZ-1R", "price": 4101.0, "note": "", "lifespan": 101015}, {"date": "2025-11-16", "odometer": 281415, "brand": "LYNXauto, C5171R", "price": 6052.0, "note": "", "lifespan": 9270}, {"date": "2026-08-25", "odometer": 290685, "brand": "CTR, CQ0248R", "price": 6503.0, "note": "", "lifespan": null}]}, {"id": "part_7", "name": "Аккумулятор", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 132754}, {"date": "2018-11-03", "odometer": 132754, "brand": "Mutlu, SFB 60А/ч обр. SMF55D", "price": 5050.0, "note": "", "lifespan": 81703}, {"date": "2022-05-26", "odometer": 214457, "brand": "BOLK, Asia 65А/ч обр. ABJ650", "price": 5272.5, "note": "", "lifespan": null}]}, {"id": "part_8", "name": "Амортизатор передний правый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 148175}, {"date": "2019-06-20", "odometer": 148175, "brand": "KYB, 339820", "price": 4360.0, "note": "", "lifespan": null}]}, {"id": "part_9", "name": "Амортизатор передний левый", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 148175}, {"date": "2019-06-20", "odometer": 148175, "brand": "KYB, 339821", "price": 4360.0, "note": "", "lifespan": null}]}, {"id": "part_10", "name": "Лампа ближнего света (Левая)", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 85011}, {"date": "2017-01-14", "odometer": 85011, "brand": "Bosch H11 12V 55W 711", "price": 438.0, "note": "", "lifespan": 56311}, {"date": "2019-03-10", "odometer": 141322, "brand": "Hella H11 12V 55W", "price": 400.0, "note": "", "lifespan": 45370}, {"date": "2021-02-23", "odometer": 186692, "brand": "Hella H11 12V 55W", "price": 770.0, "note": "", "lifespan": 22644}, {"date": "2022-03-02", "odometer": 209336, "brand": "AUTOPAL H11 12V 55W", "price": 263.0, "note": "", "lifespan": 10891}, {"date": "2022-09-16", "odometer": 220227, "brand": "OSRAM H11 12V 55W", "price": null, "note": "", "lifespan": 39373}, {"date": "2024-10-06", "odometer": 259600, "brand": "Bosch Eco", "price": 543.0, "note": "", "lifespan": 31085}, {"date": "2026-08-25", "odometer": 290685, "brand": "Bosch H11 12V 55W 711", "price": 517.0, "note": "", "lifespan": null}]}, {"id": "part_11", "name": "Лампа ближнего света (Правая)", "records": [{"date": "2012-06-10", "odometer": 0, "brand": "Оригинал (завод)", "price": null, "note": "", "lifespan": 85011}, {"date": "2017-01-14", "odometer": 85011, "brand": "Bosch H11 12V 55W 711", "price": 438.0, "note": "", "lifespan": 68579}, {"date": "2019-09-06", "odometer": 153590, "brand": "Hella H11 12V 55W", "price": 360.0, "note": "", "lifespan": 68219}, {"date": "2022-10-03", "odometer": 221809, "brand": "Ganz H11 12V 55W", "price": 170.0, "note": "", "lifespan": 921}, {"date": "2022-11-06", "odometer": 222730, "brand": "ClearLight Long Life", "price": 250.0, "note": "", "lifespan": 11131}, {"date": "2023-07-14", "odometer": 233861, "brand": "OSRAM Original Line", "price": 489.0, "note": "", "lifespan": null}]}]};
+
+    let appData = null;
+    let activeTab = 'parts';
+    let collapsedIds = new Set();
+    let deferredPrompt = null;
+    let editTarget = null;
+
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('installAppBtn');
+      if (btn) {
+        btn.classList.remove('hidden');
+        btn.classList.add('inline-flex');
+      }
+    });
+
+    async function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      document.getElementById('installAppBtn').classList.add('hidden');
+    }
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.parts) && parsed.parts.length > 0) {
+            appData = parsed;
+            recalculateAll();
+            return;
+          }
+        }
+      } catch (e) {}
+      appData = JSON.parse(JSON.stringify(INITIAL_DATA));
+      recalculateAll();
+      saveData();
+    }
+
+    function saveData() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } catch (e) {}
+    }
+
+    function recalculateAll() {
+      let maxOdo = Number(appData.currentOdometer) || 0;
+      appData.parts.forEach(part => {
+        part.records.sort((a, b) => a.odometer - b.odometer);
+        for (let i = 0; i < part.records.length; i++) {
+          if (part.records[i].odometer > maxOdo) {
+            maxOdo = part.records[i].odometer;
+          }
+          if (i < part.records.length - 1) {
+            part.records[i].lifespan = Math.max(0, part.records[i + 1].odometer - part.records[i].odometer);
+          } else {
+            part.records[i].lifespan = null;
+          }
+        }
+      });
+      appData.currentOdometer = maxOdo;
+    }
+
+    function formatNumber(num) {
+      if (num === null || num === undefined || isNaN(num)) return '—';
+      return Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+
+    function formatDateRu(isoStr) {
+      if (!isoStr) return '—';
+      const p = isoStr.split('-');
+      if (p.length !== 3) return isoStr;
+      return `${p[2]}.${p[1]}.${p[0]}`;
+    }
+
+    function pluralYears(n) {
+      const mod10 = n % 10;
+      const mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return `${n} год`;
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${n} года`;
+      return `${n} лет`;
+    }
+
+    function pluralMonths(n) {
+      const mod10 = n % 10;
+      const mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return `${n} месяц`;
+      if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${n} месяца`;
+      return `${n} месяцев`;
+    }
+
+    function formatDuration(startStr, endStr) {
+      if (!startStr) return '';
+      const d1 = new Date(startStr + 'T00:00:00');
+      const d2 = endStr ? new Date(endStr + 'T00:00:00') : new Date();
+      if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return '';
+      if (d2 < d1) return 'дата в будущем';
+
+      let years = d2.getFullYear() - d1.getFullYear();
+      let months = d2.getMonth() - d1.getMonth();
+      if (d2.getDate() < d1.getDate()) {
+        months--;
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+      if (years <= 0 && months <= 0) {
+        const days = Math.max(0, Math.floor((d2 - d1) / (1000 * 60 * 60 * 24)));
+        return days === 0 ? 'менее 1 месяца' : `${days} дн.`;
+      }
+      const parts = [];
+      if (years > 0) parts.push(pluralYears(years));
+      if (months > 0) parts.push(pluralMonths(months));
+      return parts.join(' ');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function updateOdometer() {
+      const inp = document.getElementById('odometerInput');
+      const val = parseInt(inp.value, 10);
+      if (!isNaN(val) && val >= 0) {
+        appData.currentOdometer = val;
+        saveData();
+        renderAll();
+      }
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      ['parts', 'brands', 'history'].forEach(t => {
+        const sec = document.getElementById(`tab_${t}`);
+        const btn = document.getElementById(`tabBtn_${t}`);
+        if (t === tab) {
+          sec.classList.remove('hidden');
+          btn.style.backgroundColor = '#334155';
+          btn.style.color = '#ffffff';
+          btn.style.borderColor = '#334155';
+        } else {
+          sec.classList.add('hidden');
+          btn.style.backgroundColor = '#e2e8f0';
+          btn.style.color = '#1e293b';
+          btn.style.borderColor = '#cbd5e1';
+        }
+      });
+      if (tab === 'brands') renderBrands();
+      if (tab === 'history') renderHistory();
+    }
+
+    function toggleCard(id) {
+      if (collapsedIds.has(id)) collapsedIds.delete(id);
+      else collapsedIds.add(id);
+      renderParts();
+    }
+
+    function toggleAllCards() {
+      if (collapsedIds.size === appData.parts.length) {
+        collapsedIds.clear();
+      } else {
+        appData.parts.forEach(p => collapsedIds.add(p.id));
+      }
+      renderParts();
+    }
+
+    function deletePart(partId) {
+      const idx = appData.parts.findIndex(p => p.id === partId);
+      if (idx === -1) return;
+      const partName = appData.parts[idx].name;
+      if (!confirm(`Удалить весь узел «${partName}» вместе со всеми его записями?`)) return;
+      appData.parts.splice(idx, 1);
+      collapsedIds.delete(partId);
+      recalculateAll();
+      saveData();
+      renderAll();
+    }
+
+    function deleteRecord(partId, idx) {
+      const part = appData.parts.find(p => p.id === partId);
+      if (!part) return;
+      if (!confirm(`Удалить запись «${part.records[idx].brand}» от ${formatDateRu(part.records[idx].date)}?`)) return;
+      part.records.splice(idx, 1);
+      recalculateAll();
+      saveData();
+      renderAll();
+    }
+
+    function renderParts() {
+      const container = document.getElementById('partsContainer');
+      const toggleBtn = document.getElementById('toggleAllBtn');
+      toggleBtn.textContent = collapsedIds.size === appData.parts.length ? 'Развернуть все' : 'Свернуть все';
+
+      if (!appData.parts.length) {
+        container.innerHTML = '<div class="bg-white rounded-3xl p-6 text-center text-slate-500 border border-slate-200">Список узлов пуст. Нажмите «+ Новый узел», чтобы добавить запчасть.</div>';
+        return;
+      }
+
+      container.innerHTML = appData.parts.map(part => {
+        const isCollapsed = collapsedIds.has(part.id);
+        const recs = part.records;
+        const currentRec = recs.length ? recs[recs.length - 1] : null;
+        const replacementsCount = Math.max(0, recs.length - 1);
+        const currentRun = currentRec ? Math.max(0, appData.currentOdometer - currentRec.odometer) : 0;
+        const currentWorkDuration = currentRec ? formatDuration(currentRec.date, null) : '—';
+
+        const analogLifespans = recs
+          .filter(r => r.lifespan !== null && r.odometer > 0)
+          .map(r => r.lifespan);
+        const maxAnalogLifespan = analogLifespans.length ? Math.max(...analogLifespans) : 0;
+
+        const finishedLifespans = recs.filter(r => r.lifespan !== null).map(r => r.lifespan);
+        const maxLifespan = Math.max(...finishedLifespans, currentRun, 1);
+
+        const tableRowsHtml = recs.length ? recs.map((rec, idx) => {
+          const isCurrent = idx === recs.length - 1;
+          const isFactory = rec.odometer === 0;
+          const nextRec = !isCurrent ? recs[idx + 1] : null;
+          const runKm = isCurrent ? currentRun : rec.lifespan;
+          const pct = Math.min(100, Math.round((runKm / maxLifespan) * 100));
+          const isAnalogRecord = !isCurrent && !isFactory && maxAnalogLifespan > 0 && rec.lifespan === maxAnalogLifespan && analogLifespans.length > 0;
+
+          const durationText = isCurrent
+            ? `в работе ${formatDuration(rec.date, null)}`
+            : formatDuration(rec.date, nextRec ? nextRec.date : null);
+
+          const costPer1k = (rec.price && runKm > 0) ? ((rec.price / runKm) * 1000).toFixed(1) : null;
+
+          let badgeHtml = '';
+          if (isFactory) {
+            badgeHtml = `<span class="mt-1.5 inline-block px-2.5 py-0.5 text-xs font-bold rounded-lg bg-slate-100 text-slate-600 border border-slate-300">Завод</span>`;
+          } else if (isCurrent) {
+            badgeHtml = `<span class="mt-1.5 inline-block px-2.5 py-0.5 text-xs font-bold rounded-xl bg-sky-50 text-sky-700 border border-sky-200 leading-tight">Сейчас стоит на авто</span>`;
+          } else if (isAnalogRecord) {
+            badgeHtml = `<span class="mt-1.5 inline-block px-2.5 py-0.5 text-xs font-bold rounded-lg bg-emerald-100 text-emerald-800 border border-emerald-300 leading-tight">Рекорд аналога</span>`;
+          }
+
+          const noteHtml = rec.note
+            ? `<div class="mt-1.5 text-xs sm:text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1 leading-snug">📝 ${escapeHtml(rec.note)}</div>`
+            : '';
+
+          return `
+            <tr class="border-b border-slate-100 last:border-b-0 ${isCurrent ? 'bg-sky-50/40' : 'hover:bg-slate-50/80'}">
+              <td class="py-3.5 px-3 align-top whitespace-nowrap">
+                <div class="text-sm sm:text-base font-extrabold text-slate-900">${formatDateRu(rec.date)}</div>
+                <div class="text-sm font-semibold text-slate-500 mt-0.5">${formatNumber(rec.odometer)} км</div>
+              </td>
+
+              <td class="py-3.5 px-3 align-top min-w-[165px] max-w-[220px]">
+                <div class="text-sm sm:text-base font-extrabold text-slate-900 leading-snug break-words">${escapeHtml(rec.brand)}</div>
+                ${badgeHtml}
+                ${noteHtml}
+              </td>
+
+              <td class="py-3.5 px-3 align-top min-w-[215px]">
+                <div class="flex items-baseline justify-between gap-3">
+                  <span class="text-base sm:text-lg font-black ${isCurrent ? 'text-sky-700' : (isAnalogRecord ? 'text-emerald-700' : 'text-slate-900')} whitespace-nowrap">
+                    ${isCurrent ? 'Прошла: ' : ''}${formatNumber(runKm)} км
+                  </span>
+                  <span class="text-sm font-semibold ${isCurrent ? 'text-sky-700' : 'text-slate-500'} whitespace-nowrap">${durationText}</span>
+                </div>
+                <div class="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden mt-2">
+                  <div class="h-full rounded-full ${isCurrent ? 'bg-sky-500' : (isAnalogRecord ? 'bg-emerald-500' : 'bg-slate-400')}" style="width: ${pct}%"></div>
+                </div>
+              </td>
+
+              <td class="py-3.5 px-3 align-top whitespace-nowrap">
+                <div class="text-sm sm:text-base font-extrabold text-slate-800">${rec.price !== null ? formatNumber(rec.price) + ' ₽' : '—'}</div>
+                ${costPer1k ? `<div class="text-xs sm:text-sm font-semibold text-slate-500 mt-0.5">${costPer1k} ₽ / 1000 км</div>` : ''}
+              </td>
+
+              <td class="py-3.5 px-3 align-top text-right whitespace-nowrap">
+                <div class="inline-flex items-center gap-1.5">
+                  <button
+                    onclick="openEditModal('${part.id}', ${idx})"
+                    class="text-xs sm:text-sm font-bold text-slate-700 hover:text-slate-900 px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300 transition"
+                  >
+                    Редактировать
+                  </button>
+                  <button
+                    onclick="deleteRecord('${part.id}', ${idx})"
+                    class="text-xs sm:text-sm font-bold text-rose-600 hover:text-rose-800 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 transition"
+                  >
+                    Удалить
+                  </button>
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join('') : `
+          <tr>
+            <td colspan="5" class="py-4 px-4 text-center text-sm text-slate-500">Записей пока нет. Нажмите «+ Заменить», чтобы добавить первую установку.</td>
+          </tr>
+        `;
+
+        return `
+          <article class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-4 sm:p-5 space-y-3.5">
+              <div class="flex items-start gap-3">
+                <button
+                  onclick="toggleCard('${part.id}')"
+                  class="mt-0.5 w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-700 shrink-0 transition"
+                  title="Свернуть / развернуть"
+                >
+                  <svg class="w-5 h-5 transition-transform ${isCollapsed ? '-rotate-90' : ''}" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                  </svg>
+                </button>
+                <div class="flex-1 min-w-0">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h2 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">${escapeHtml(part.name)}</h2>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      <span class="px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-300 text-xs sm:text-sm font-bold text-slate-700">
+                        Замен: ${replacementsCount}
+                      </span>
+                      <button
+                        onclick="deletePart('${part.id}')"
+                        class="px-2.5 py-0.5 rounded-full bg-rose-50 hover:bg-rose-100 border border-rose-200 text-xs sm:text-sm font-bold text-rose-700 transition"
+                        title="Удалить узел целиком"
+                      >
+                        Удалить узел
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mt-2 space-y-1 text-sm sm:text-base text-slate-700">
+                    <div>Сейчас стоит: <strong class="text-slate-900">${currentRec ? escapeHtml(currentRec.brand) : '—'}</strong></div>
+                    <div>Ресурс на данный момент: <strong class="text-sky-700 text-base sm:text-lg">${formatNumber(currentRun)} км</strong></div>
+                    <div>В работе на сегодня: <strong class="text-emerald-700">${currentWorkDuration}</strong></div>
+                    ${currentRec && currentRec.note ? `<div class="text-amber-800 text-sm pt-0.5">📝 ${escapeHtml(currentRec.note)}</div>` : ''}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onclick="openAddModal('${part.id}')"
+                class="w-full h-11 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-white font-extrabold text-base border border-emerald-600 shadow-xs transition flex items-center justify-center gap-1.5"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.8" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/>
+                </svg>
+                <span>Заменить</span>
+              </button>
+            </div>
+
+            ${!isCollapsed ? `
+              <div class="border-t border-slate-200 overflow-x-auto table-scroll pb-1">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50/90 border-b border-slate-200 text-xs font-extrabold uppercase tracking-wider text-slate-500">
+                      <th class="py-3 px-3 whitespace-nowrap">Установка</th>
+                      <th class="py-3 px-3 whitespace-nowrap">Бренд и артикул</th>
+                      <th class="py-3 px-3 whitespace-nowrap">Прослужила (ресурс)</th>
+                      <th class="py-3 px-3 whitespace-nowrap">Цена / 1000 км</th>
+                      <th class="py-3 px-3 text-right whitespace-nowrap">Действие</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${tableRowsHtml}
+                  </tbody>
+                </table>
+              </div>
+            ` : ''}
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderBrands() {
+      const container = document.getElementById('brandsContainer');
+      const brandMap = {};
+
+      appData.parts.forEach(part => {
+        part.records.forEach(rec => {
+          if (rec.lifespan !== null && rec.lifespan > 0) {
+            const bName = rec.brand.split(',')[0].trim();
+            if (!brandMap[bName]) {
+              brandMap[bName] = { brand: bName, totalKm: 0, count: 0, totalCost: 0, costKm: 0, items: [] };
+            }
+            brandMap[bName].totalKm += rec.lifespan;
+            brandMap[bName].count += 1;
+            if (rec.price) {
+              brandMap[bName].totalCost += rec.price;
+              brandMap[bName].costKm += rec.lifespan;
+            }
+            brandMap[bName].items.push(`${part.name} (${formatNumber(rec.lifespan)} км)`);
+          }
+        });
+      });
+
+      const list = Object.values(brandMap).sort((a, b) => (b.totalKm / b.count) - (a.totalKm / a.count));
+      if (!list.length) {
+        container.innerHTML = '<p class="text-base text-slate-500">Пока нет завершённых циклов службы запчастей для сравнения.</p>';
+        return;
+      }
+
+      container.innerHTML = list.map(b => {
+        const avgKm = Math.round(b.totalKm / b.count);
+        const avgCost1k = b.costKm > 0 ? ((b.totalCost / b.costKm) * 1000).toFixed(1) : null;
+        return `
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-lg font-extrabold text-slate-900">${escapeHtml(b.brand)}</span>
+              <span class="text-lg font-black text-sky-700">~ ${formatNumber(avgKm)} км</span>
+            </div>
+            <div class="text-sm font-semibold text-slate-600">
+              Завершённых циклов: ${b.count} ${avgCost1k ? `· Средняя цена 1 000 км: <strong class="text-emerald-700">${avgCost1k} ₽</strong>` : ''}
+            </div>
+            <div class="text-sm text-slate-500">${escapeHtml(b.items.join('; '))}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('timelineContainer');
+      const all = [];
+      appData.parts.forEach(part => {
+        part.records.forEach(rec => {
+          if (rec.odometer > 0) {
+            all.push({ partName: part.name, ...rec });
+          }
+        });
+      });
+      all.sort((a, b) => b.odometer - a.odometer);
+
+      container.innerHTML = all.map(item => `
+        <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
+          <div>
+            <div class="text-base font-extrabold text-slate-900">${escapeHtml(item.partName)}</div>
+            <div class="text-sm font-semibold text-slate-700">${escapeHtml(item.brand)}</div>
+            <div class="text-sm text-slate-500">${formatDateRu(item.date)} · ${formatNumber(item.odometer)} км</div>
+            ${item.note ? `<div class="text-xs text-amber-800 mt-1">📝 ${escapeHtml(item.note)}</div>` : ''}
+          </div>
+          <div class="text-right shrink-0">
+            <div class="text-base font-extrabold text-slate-800">${item.price ? formatNumber(item.price) + ' ₽' : '—'}</div>
+            ${item.lifespan ? `<div class="text-sm font-bold text-sky-700">прошла ${formatNumber(item.lifespan)} км</div>` : '<div class="text-xs font-bold text-emerald-600">в работе</div>'}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openAddModal(preselectPartId) {
+      editTarget = null;
+      document.getElementById('modalTitle').textContent = 'Новая замена запчасти';
+      const sel = document.getElementById('modalPartSelect');
+      sel.disabled = false;
+      sel.innerHTML = appData.parts.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+      if (preselectPartId) sel.value = preselectPartId;
+
+      const today = new Date().toISOString().slice(0, 10);
+      document.getElementById('modalDateInput').value = today;
+      document.getElementById('modalOdoInput').value = appData.currentOdometer;
+      document.getElementById('modalBrandInput').value = '';
+      document.getElementById('modalPriceInput').value = '';
+      document.getElementById('modalNoteInput').value = '';
+
+      updateModalPreview();
+      document.getElementById('addModal').classList.remove('hidden');
+    }
+
+    function openEditModal(partId, recIdx) {
+      const part = appData.parts.find(p => p.id === partId);
+      if (!part || !part.records[recIdx]) return;
+      const rec = part.records[recIdx];
+
+      editTarget = { partId, recIdx };
+      document.getElementById('modalTitle').textContent = 'Редактировать запись';
+      const sel = document.getElementById('modalPartSelect');
+      sel.innerHTML = appData.parts.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+      sel.value = partId;
+      sel.disabled = true;
+
+      document.getElementById('modalDateInput').value = rec.date || '';
+      document.getElementById('modalOdoInput').value = rec.odometer;
+      document.getElementById('modalBrandInput').value = rec.brand || '';
+      document.getElementById('modalPriceInput').value = rec.price !== null && rec.price !== undefined ? rec.price : '';
+      document.getElementById('modalNoteInput').value = rec.note || '';
+
+      updateModalPreview();
+      document.getElementById('addModal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      editTarget = null;
+      document.getElementById('addModal').classList.add('hidden');
+    }
+
+    function updateModalPreview() {
+      const partId = document.getElementById('modalPartSelect').value;
+      const newOdo = parseInt(document.getElementById('modalOdoInput').value, 10) || 0;
+      const part = appData.parts.find(p => p.id === partId);
+      const box = document.getElementById('modalPreviewBox');
+      const datalist = document.getElementById('brandSuggestions');
+
+      if (!part) return;
+      const brands = [...new Set(part.records.map(r => r.brand).filter(b => b && !b.toLowerCase().includes('оригинал')))];
+      datalist.innerHTML = brands.map(b => `<option value="${escapeHtml(b)}">`).join('');
+
+      if (editTarget) {
+        box.innerHTML = `Редактирование записи узла <strong>${escapeHtml(part.name)}</strong>. Ресурс соседних деталей пересчитается автоматически после сохранения.`;
+        return;
+      }
+
+      if (part.records.length > 0) {
+        const prev = part.records[part.records.length - 1];
+        const diff = newOdo - prev.odometer;
+        if (diff >= 0) {
+          box.innerHTML = `Снимаемая деталь <strong>${escapeHtml(prev.brand)}</strong> (установлена на ${formatNumber(prev.odometer)} км) получит итоговый ресурс: <strong class="text-emerald-700 text-base">${formatNumber(diff)} км</strong>.`;
+        } else {
+          box.innerHTML = `<span class="text-rose-700 font-bold">Внимание: новый пробег меньше предыдущего (${formatNumber(prev.odometer)} км).</span>`;
+        }
+      } else {
+        box.innerHTML = 'Это будет первая запись для данного узла.';
+      }
+    }
+
+    function saveReplacement() {
+      const partId = document.getElementById('modalPartSelect').value;
+      const dateVal = document.getElementById('modalDateInput').value;
+      const odoVal = parseInt(document.getElementById('modalOdoInput').value, 10);
+      const brandVal = document.getElementById('modalBrandInput').value.trim();
+      const priceRaw = document.getElementById('modalPriceInput').value.trim();
+      const priceVal = priceRaw ? parseFloat(priceRaw) : null;
+      const noteVal = document.getElementById('modalNoteInput').value.trim();
+
+      if (!dateVal || isNaN(odoVal) || !brandVal) {
+        alert('Пожалуйста, заполните дату, пробег и бренд запчасти.');
+        return;
+      }
+
+      const part = appData.parts.find(p => p.id === partId);
+      if (!part) return;
+
+      if (editTarget) {
+        const rec = part.records[editTarget.recIdx];
+        if (rec) {
+          rec.date = dateVal;
+          rec.odometer = odoVal;
+          rec.brand = brandVal;
+          rec.price = priceVal;
+          rec.note = noteVal;
+        }
+      } else {
+        part.records.push({
+          date: dateVal,
+          odometer: odoVal,
+          brand: brandVal,
+          price: priceVal,
+          note: noteVal,
+          lifespan: null
+        });
+      }
+
+      if (odoVal > appData.currentOdometer) {
+        appData.currentOdometer = odoVal;
+      }
+
+      recalculateAll();
+      saveData();
+      closeAddModal();
+      renderAll();
+    }
+
+    function openNewPartModal() {
+      document.getElementById('newPartNameInput').value = '';
+      document.getElementById('newPartModal').classList.remove('hidden');
+    }
+
+    function closeNewPartModal() {
+      document.getElementById('newPartModal').classList.add('hidden');
+    }
+
+    function createNewPart() {
+      const name = document.getElementById('newPartNameInput').value.trim();
+      if (!name) return;
+      appData.parts.push({
+        id: 'part_' + Date.now(),
+        name: name,
+        records: []
+      });
+      saveData();
+      closeNewPartModal();
+      renderAll();
+      openAddModal(appData.parts[appData.parts.length - 1].id);
+    }
+
+    function exportCSV() {
+      const rows = [['Узел / Запчасть', 'Дата установки', 'Пробег установки (км)', 'Бренд и артикул', 'Цена (руб)', 'Ресурс детали (км)', 'Примечание']];
+      appData.parts.forEach(p => {
+        p.records.forEach(r => {
+          rows.push([
+            `"${p.name.replace(/"/g, '""')}"`,
+            r.date,
+            r.odometer,
+            `"${r.brand.replace(/"/g, '""')}"`,
+            r.price !== null ? r.price : '',
+            r.lifespan !== null ? r.lifespan : '',
+            `"${(r.note || '').replace(/"/g, '""')}"`
+          ]);
+        });
+      });
+      const csvContent = '\uFEFF' + rows.map(e => e.join(';')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Mazda5_запчасти_${new Date().toISOString().slice(0, 10)}.csv`;
+      link.click();
+    }
+
+    function exportJSON() {
+      const blob = new Blob([JSON.stringify(appData, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Mazda5_резервная_копия_${new Date().toISOString().slice(0, 10)}.json`;
+      link.click();
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.parts)) {
+            appData = parsed;
+            recalculateAll();
+            saveData();
+            renderAll();
+            alert('Данные успешно загружены!');
+          }
+        } catch (err) {
+          alert('Ошибка чтения файла резервной копии.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetToDefault() {
+      if (!confirm('Вернуть исходные данные из вашего файла Excel? Текущие изменения будут заменены.')) return;
+      appData = JSON.parse(JSON.stringify(INITIAL_DATA));
+      recalculateAll();
+      saveData();
+      renderAll();
+    }
+
+    function renderAll() {
+      document.getElementById('odometerInput').value = appData.currentOdometer;
+      renderParts();
+      if (activeTab === 'brands') renderBrands();
+      if (activeTab === 'history') renderHistory();
+    }
+
+    loadData();
+    switchTab('parts');
+    renderAll();
+  </script>
+</body>
+</html>
